@@ -1,19 +1,53 @@
 import streamlit as st
 from streamlit_mic_recorder import speech_to_text
 
-# Título de la aplicación
-st.title("Dictado por Voz")
-st.write("Presiona el botón, permite el uso del micrófono y empieza a hablar.")
+# -------------------------------
+# Configuración de la página
+# -------------------------------
+st.set_page_config(page_title="Dictado por Voz", layout="centered")
 
-# Versión simplificada del componente
+# -------------------------------
+# Estado de la app
+# -------------------------------
+if "texto" not in st.session_state:
+    st.session_state.texto = ""
+
+# -------------------------------
+# UI
+# -------------------------------
+st.title("🎙️ Dictado por Voz")
+st.write("Presiona el botón, permite el micrófono y comienza a hablar.")
+
+# -------------------------------
+# Grabación de voz
+# -------------------------------
 texto_dictado = speech_to_text(
-    start_prompt="Click para grabar",
-    stop_prompt="Detener",
-    language='es',
-    key='dictado'
+    start_prompt="🎤 Iniciar grabación",
+    stop_prompt="⏹️ Detener",
+    language="es",
+    key="dictado"
 )
 
-# Mostrar el texto si se detecta algo
+# -------------------------------
+# Procesamiento
+# -------------------------------
 if texto_dictado:
-    st.success("¡Texto detectado!")
-    st.text_area("Resultado:", value=texto_dictado, height=200)
+    st.session_state.texto += " " + texto_dictado
+
+# -------------------------------
+# Mostrar resultado
+# -------------------------------
+if st.session_state.texto:
+    st.success("Texto detectado:")
+    
+    st.text_area(
+        "Resultado:",
+        value=st.session_state.texto,
+        height=200
+    )
+
+# -------------------------------
+# Botón para limpiar
+# -------------------------------
+if st.button("🧹 Limpiar texto"):
+    st.session_state.texto = ""
