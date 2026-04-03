@@ -82,7 +82,7 @@ python app.py
 ### 5. Acceder a la Aplicación
 Abre tu navegador web y visita:
 ```
-http://localhost:5000
+http://localhost:5001
 ```
 
 ## 📖 Uso de la Aplicación
@@ -184,24 +184,6 @@ Puedes personalizar la aplicación modificando `config.py`:
 - [ ] Sistema de logging avanzado
 - [ ] Despliegue en la nube
 
-## 📄 Licencia
-
-Este proyecto está disponible para fines educativos. Siéntete libre de usarlo, modificarlo y aprender de él.
-
-## 🙏 Agradecimientos
-
-- **MediaPipe** por la excelente biblioteca de detección de manos
-- **Flask** por el framework web ligero y potente
-- **Bootstrap** por el framework CSS fácil de usar
-- **Programa educativo** por hacer posible este proyecto
-
-## 📞 Contacto
-
-Para preguntas, sugerencias o colaboraciones:
-
-- **Issues de GitHub**: Reporta problemas o solicita características
-- **Discusiones**: Comparte ideas y mejora el proyecto
-- **Email**: [tu-email@ejemplo.com]
 
 ---
 
