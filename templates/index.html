@@ -1,30 +1,44 @@
 <!DOCTYPE html>
 <html lang="es">
+<!-- 
+  Signify - Traductor de Lenguaje de Señas
+  Archivo: index.html
+  Propósito: Interfaz principal de usuario con cámara y reconocimiento de voz
+  Tecnologías: HTML5, CSS3, Bootstrap 5, JavaScript ES6+
+-->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Signify - Traductor de Lenguaje de Señas</title>
+    
+    <!-- Framework CSS para diseño responsivo y moderno -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Iconos para mejorar la interfaz visual -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
     <style>
+        /* Variables CSS para mantener consistencia visual */
         :root {
-            --primary-color: #5698fc;
-            --secondary-color: #76dd8c;
-            --accent-color: #fff345;
-            --success-color: #28a745;
-            --danger-color: #dc3545;
+            --primary-color: #5698fc;    /* Color principal azul */
+            --secondary-color: #76dd8c;  /* Color secundario verde */
+            --accent-color: #fff345;     /* Color amarillo acento */
+            --success-color: #28a745;    /* Verde para éxito */
+            --danger-color: #dc3545;     /* Rojo para errores */
         }
 
+        /* Estilos base para toda la página */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);  /* Fondo degradado moderno */
             min-height: 100vh;
             color: #333;
         }
 
+        /* Barra de navegación fija en la parte superior */
         .navbar {
             background-color: var(--secondary-color) !important;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);  /* Sombra sutil */
         }
 
         .navbar-brand {
@@ -33,28 +47,32 @@
             font-size: 1.5rem;
         }
 
+        /* Contenedor principal con espaciado adecuado */
         .main-container {
-            margin-top: 80px;
+            margin-top: 80px;  /* Espacio para navbar fija */
             padding: 20px;
         }
 
+        /* Tarjetas para cada modo de entrada */
         .card {
             border: none;
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
+            transition: transform 0.3s ease;  /* Animación hover */
         }
 
         .card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-5px);  /* Eleva tarjeta al hacer hover */
         }
 
+        /* Tarjetas específicas para modos */
         .mode-card {
             background: white;
             margin: 20px 0;
             overflow: hidden;
         }
 
+        /* Encabezado de cada tarjeta de modo */
         .mode-header {
             background: linear-gradient(135deg, var(--primary-color), #4285e9);
             color: white;
@@ -62,6 +80,7 @@
             text-align: center;
         }
 
+        /* Contenedor para la cámara web */
         .camera-container {
             position: relative;
             background: #000;
@@ -70,12 +89,14 @@
             margin: 20px 0;
         }
 
+        /* Video de la cámara */
         #video {
             width: 100%;
             height: auto;
             display: block;
         }
 
+        /* Botones personalizados con estilo consistente */
         .btn-primary-custom {
             background-color: var(--primary-color);
             border-color: var(--primary-color);
@@ -90,7 +111,7 @@
             background-color: var(--accent-color);
             border-color: var(--accent-color);
             color: var(--primary-color);
-            transform: scale(1.05);
+            transform: scale(1.05);  /* Efecto de agrandar al hover */
         }
 
         .btn-secondary-custom {
@@ -110,6 +131,7 @@
             transform: scale(1.05);
         }
 
+        /* Área para mostrar resultados */
         .result-display {
             background: #f8f9fa;
             border-radius: 10px;
@@ -118,6 +140,7 @@
             min-height: 100px;
         }
 
+        /* Letra detectada en grande */
         .letter-display {
             font-size: 3rem;
             font-weight: bold;
@@ -126,6 +149,7 @@
             margin: 20px 0;
         }
 
+        /* Palabra formada */
         .word-display {
             font-size: 1.5rem;
             color: var(--primary-color);
@@ -133,6 +157,7 @@
             margin: 20px 0;
         }
 
+        /* Indicador de estado del servidor */
         .status-indicator {
             display: inline-block;
             width: 12px;
@@ -149,12 +174,14 @@
             background-color: var(--danger-color);
         }
 
+        /* Spinner de carga (oculto por defecto) */
         .loading-spinner {
             display: none;
             text-align: center;
             margin: 20px 0;
         }
 
+        /* Guía de gestos para usuarios */
         .gesture-guide {
             background: #e9ecef;
             border-radius: 10px;
@@ -174,11 +201,13 @@
             min-width: 30px;
         }
 
+        /* Alertas personalizadas */
         .alert-custom {
             border-radius: 10px;
             margin: 10px 0;
         }
 
+        /* Animación de pulso para elementos activos */
         @keyframes pulse {
             0% { transform: scale(1); }
             50% { transform: scale(1.05); }
@@ -191,7 +220,12 @@
     </style>
 </head>
 <body>
-    <!-- Navigation -->
+    <!-- 
+      BARRA DE NAVEGACIÓN
+      - Fija en la parte superior
+      - Muestra el estado de conexión del servidor
+      - Contiene el logo/brand de la aplicación
+    -->
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
         <div class="container">
             <a class="navbar-brand" href="#">
@@ -205,6 +239,7 @@
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
                         <span class="nav-link">
+                            <!-- Indicador visual de estado del servidor -->
                             <span class="status-indicator" id="statusIndicator"></span>
                             <span id="statusText">Conectando...</span>
                         </span>
@@ -214,8 +249,14 @@
         </div>
     </nav>
 
-    <!-- Main Content -->
+    <!-- 
+      CONTENIDO PRINCIPAL
+      - Título y descripción de la aplicación
+      - Dos modos: Lenguaje de Señas y Voz
+      - Interfaz responsiva para móviles y escritorio
+    -->
     <div class="container main-container">
+        <!-- Encabezado principal -->
         <div class="row">
             <div class="col-12">
                 <div class="text-center mb-4">
@@ -228,8 +269,18 @@
             </div>
         </div>
 
-        <!-- Mode Selection -->
+        <!-- 
+          SELECCIÓN DE MODO
+          Dos columnas para diferentes métodos de entrada
+          Cada modo tiene su propia tarjeta con funcionalidades específicas
+        -->
         <div class="row">
+            <!-- 
+              MODO 1: LENGUAJE DE SEÑAS A TEXTO
+              - Usa cámara web para capturar gestos
+              - Procesa imágenes con IA para detectar letras
+              - Construye palabras letra por letra
+            -->
             <div class="col-md-6">
                 <div class="card mode-card">
                     <div class="mode-header">
@@ -237,11 +288,17 @@
                         <p>Usa tus manos para formar letras y palabras</p>
                     </div>
                     <div class="card-body">
+                        <!-- 
+                          CONTENEDOR DE CÁMARA
+                          - Muestra video en tiempo real
+                          - Canvas oculto para capturar frames
+                        -->
                         <div class="camera-container">
                             <video id="video" autoplay playsinline></video>
                             <canvas id="canvas" style="display:none;"></canvas>
                         </div>
                         
+                        <!-- Botones de control -->
                         <div class="text-center">
                             <button id="captureBtn" class="btn btn-primary-custom btn-lg me-2">
                                 <i class="fas fa-camera me-2"></i>Capturar Seña
@@ -251,6 +308,7 @@
                             </button>
                         </div>
 
+                        <!-- Spinner de carga (visible durante procesamiento) -->
                         <div class="loading-spinner">
                             <div class="spinner-border text-primary" role="status">
                                 <span class="visually-hidden">Procesando...</span>
@@ -258,6 +316,11 @@
                             <p class="mt-2">Detectando gesto...</p>
                         </div>
 
+                        <!-- 
+                          ÁREA DE RESULTADOS
+                          - Muestra letra detectada
+                          - Muestra palabra formada
+                        -->
                         <div class="result-display">
                             <div class="letter-display" id="letterDisplay">
                                 <i class="fas fa-hand-paper text-muted"></i>
@@ -267,6 +330,11 @@
                             </div>
                         </div>
 
+                        <!-- 
+                          GUÍA DE GESTOS
+                          - Ayuda visual para usuarios
+                          - Explica mapeo de dedos a letras
+                        -->
                         <div class="gesture-guide">
                             <h5><i class="fas fa-info-circle me-2"></i>Guía de Gestos</h5>
                             <div class="gesture-item">
@@ -294,6 +362,12 @@
                 </div>
             </div>
 
+            <!-- 
+              MODO 2: VOZ A TEXTO
+              - Usa Web Speech API para reconocimiento de voz
+              - Convierte voz en texto en tiempo real
+              - Soporte para español
+            -->
             <div class="col-md-6">
                 <div class="card mode-card">
                     <div class="mode-header">
@@ -301,18 +375,21 @@
                         <p>Dicta tu mensaje usando tu voz</p>
                     </div>
                     <div class="card-body">
+                        <!-- Botón de control de voz -->
                         <div class="text-center">
                             <button id="voiceBtn" class="btn btn-primary-custom btn-lg mb-3">
                                 <i class="fas fa-microphone me-2"></i>Iniciar Dictado
                             </button>
                         </div>
 
+                        <!-- Área de resultados de voz -->
                         <div class="result-display">
                             <div id="voiceResult" class="word-display">
                                 Esperando dictado...
                             </div>
                         </div>
 
+                        <!-- Instrucciones para el usuario -->
                         <div class="gesture-guide">
                             <h5><i class="fas fa-info-circle me-2"></i>Instrucciones</h5>
                             <p>1. Haz clic en "Iniciar Dictado"</p>
@@ -325,20 +402,31 @@
             </div>
         </div>
 
-        <!-- Alert Container -->
+        <!-- Contenedor para alertas dinámicas -->
         <div id="alertContainer"></div>
     </div>
 
+    <!-- 
+      SCRIPTS JAVASCRIPT
+      - Lógica del lado del cliente
+      - Manejo de cámara y micrófono
+      - Comunicación con el servidor Flask
+      - Actualización dinámica de la interfaz
+    -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Global variables
+        // Variables globales para el estado de la aplicación
         let video = document.getElementById('video');
         let canvas = document.getElementById('canvas');
         let ctx = canvas.getContext('2d');
         let currentWord = '';
         let isRecording = false;
 
-        // Check server status
+        /**
+         * VERIFICAR ESTADO DEL SERVIDOR
+         * Consulta el endpoint /health para saber si el servidor
+         * y el detector de gestos están funcionando correctamente
+         */
         async function checkServerStatus() {
             try {
                 const response = await fetch('/health');
@@ -349,6 +437,10 @@
             }
         }
 
+        /**
+         * ACTUALIZAR INDICADOR DE ESTADO
+         * Muestra visualmente si estamos conectados al servidor
+         */
         function updateStatus(connected) {
             const indicator = document.getElementById('statusIndicator');
             const text = document.getElementById('statusText');
@@ -362,7 +454,10 @@
             }
         }
 
-        // Show alert message
+        /**
+         * MOSTRAR ALERTAS TEMPORALES
+         * Crea alertas Bootstrap que desaparecen automáticamente
+         */
         function showAlert(message, type = 'info') {
             const alertContainer = document.getElementById('alertContainer');
             const alert = document.createElement('div');
@@ -373,12 +468,16 @@
             `;
             alertContainer.appendChild(alert);
             
+            // Auto-eliminar después de 5 segundos
             setTimeout(() => {
                 alert.remove();
             }, 5000);
         }
 
-        // Initialize camera
+        /**
+         * INICIALIZAR CÁMARA WEB
+         * Solicita permisos y configura el stream de video
+         */
         async function initCamera() {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ 
@@ -394,20 +493,25 @@
             }
         }
 
-        // Capture photo
+        /**
+         * CAPTURAR FOTO DE LA CÁMARA
+         * Convierte el frame actual en imagen y lo envía al servidor
+         */
         async function capturePhoto() {
             if (!video.srcObject) {
                 showAlert('Por favor, espera a que la cámara se inicie', 'warning');
                 return;
             }
 
+            // Configurar canvas con las dimensiones del video
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
             ctx.drawImage(video, 0, 0);
 
-            // Show loading spinner
+            // Mostrar spinner de carga
             document.querySelector('.loading-spinner').style.display = 'block';
 
+            // Convertir canvas a blob y enviar al servidor
             canvas.toBlob(async function(blob) {
                 const formData = new FormData();
                 formData.append('foto', blob, 'gesture.jpg');
@@ -434,7 +538,10 @@
             });
         }
 
-        // Update display
+        /**
+         * ACTUALIZAR DISPLAY DE RESULTADOS
+         * Muestra la letra detectada y la palabra formada
+         */
         function updateDisplay(letter, word) {
             const letterDisplay = document.getElementById('letterDisplay');
             const wordDisplay = document.getElementById('wordDisplay');
@@ -451,7 +558,10 @@
             }
         }
 
-        // Reset word
+        /**
+         * REINICIAR PALABRA ACTUAL
+         * Limpia la palabra y letra detectada
+         */
         async function resetWord() {
             try {
                 const response = await fetch('/reset_word', {
@@ -473,20 +583,28 @@
             }
         }
 
-        // Voice recognition (Web Speech API)
+        /**
+         * RECONOCIMIENTO DE VOZ (Web Speech API)
+         * Utiliza la API nativa del navegador para convertir voz en texto
+         * Soporte para español con transcripción en tiempo real
+         */
         function startVoiceRecognition() {
+            // Verificar si el navegador soporta reconocimiento de voz
             if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
                 showAlert('Tu navegador no soporta reconocimiento de voz', 'warning');
                 return;
             }
 
+            // Crear instancia de reconocimiento de voz
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             const recognition = new SpeechRecognition();
 
-            recognition.lang = 'es-ES';
-            recognition.continuous = true;
-            recognition.interimResults = true;
+            // Configurar reconocimiento
+            recognition.lang = 'es-ES';        // Español de España
+            recognition.continuous = true;          // Escuchar continuamente
+            recognition.interimResults = true;       // Mostrar resultados parciales
 
+            // Eventos del reconocimiento
             recognition.onstart = function() {
                 document.getElementById('voiceBtn').innerHTML = '<i class="fas fa-stop me-2"></i>Detener Dictado';
                 document.getElementById('voiceBtn').classList.add('recording');
@@ -497,6 +615,7 @@
                 let finalTranscript = '';
                 let interimTranscript = '';
 
+                // Procesar todos los resultados
                 for (let i = event.resultIndex; i < event.results.length; i++) {
                     const transcript = event.results[i][0].transcript;
                     if (event.results[i].isFinal) {
@@ -506,6 +625,7 @@
                     }
                 }
 
+                // Actualizar display con resultados
                 const voiceResult = document.getElementById('voiceResult');
                 if (finalTranscript) {
                     voiceResult.textContent = finalTranscript;
@@ -523,10 +643,15 @@
                 stopVoiceRecognition();
             };
 
+            // Iniciar reconocimiento
             recognition.start();
             window.currentRecognition = recognition;
         }
 
+        /**
+         * DETENER RECONOCIMIENTO DE VOZ
+         * Detiene la instancia actual y restaura el botón
+         */
         function stopVoiceRecognition() {
             if (window.currentRecognition) {
                 window.currentRecognition.stop();
@@ -536,7 +661,10 @@
             document.getElementById('voiceBtn').classList.remove('recording');
         }
 
-        // Event listeners
+        /**
+         * CONFIGURAR EVENT LISTENERS
+         * Asigna funciones a los eventos de los elementos HTML
+         */
         document.getElementById('captureBtn').addEventListener('click', capturePhoto);
         document.getElementById('resetBtn').addEventListener('click', resetWord);
         document.getElementById('voiceBtn').addEventListener('click', function() {
@@ -547,11 +675,14 @@
             }
         });
 
-        // Initialize
+        /**
+         * INICIALIZAR LA APLICACIÓN
+         * Se ejecuta cuando el DOM está completamente cargado
+         */
         document.addEventListener('DOMContentLoaded', function() {
-            initCamera();
-            checkServerStatus();
-            setInterval(checkServerStatus, 30000); // Check status every 30 seconds
+            initCamera();                    // Iniciar cámara
+            checkServerStatus();              // Verificar estado del servidor
+            setInterval(checkServerStatus, 30000); // Verificar cada 30 segundos
         });
     </script>
 </body>
