@@ -1,55 +1,690 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
+<!-- 
+  Signify - Traductor de Lenguaje de Señas
+  Archivo: index.html
+  Propósito: Interfaz principal de usuario con cámara y reconocimiento de voz
+  Tecnologías: HTML5, CSS3, Bootstrap 5, JavaScript ES6+
+-->
 <head>
-<title>Componente Cámara</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signify - Traductor de Lenguaje de Señas</title>
+    
+    <!-- Framework CSS para diseño responsivo y moderno -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Iconos para mejorar la interfaz visual -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        /* Variables CSS para mantener consistencia visual */
+        :root {
+            --primary-color: #5698fc;    /* Color principal azul */
+            --secondary-color: #76dd8c;  /* Color secundario verde */
+            --accent-color: #fff345;     /* Color amarillo acento */
+            --success-color: #28a745;    /* Verde para éxito */
+            --danger-color: #dc3545;     /* Rojo para errores */
+        }
+
+        /* Estilos base para toda la página */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);  /* Fondo degradado moderno */
+            min-height: 100vh;
+            color: #333;
+        }
+
+        /* Barra de navegación fija en la parte superior */
+        .navbar {
+            background-color: var(--secondary-color) !important;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);  /* Sombra sutil */
+        }
+
+        .navbar-brand {
+            color: var(--primary-color) !important;
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+
+        /* Contenedor principal con espaciado adecuado */
+        .main-container {
+            margin-top: 80px;  /* Espacio para navbar fija */
+            padding: 20px;
+        }
+
+        /* Tarjetas para cada modo de entrada */
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;  /* Animación hover */
+        }
+
+        .card:hover {
+            transform: translateY(-5px);  /* Eleva tarjeta al hacer hover */
+        }
+
+        /* Tarjetas específicas para modos */
+        .mode-card {
+            background: white;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        /* Encabezado de cada tarjeta de modo */
+        .mode-header {
+            background: linear-gradient(135deg, var(--primary-color), #4285e9);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        /* Contenedor para la cámara web */
+        .camera-container {
+            position: relative;
+            background: #000;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        /* Video de la cámara */
+        #video {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* Botones personalizados con estilo consistente */
+        .btn-primary-custom {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary-custom:hover {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+            color: var(--primary-color);
+            transform: scale(1.05);  /* Efecto de agrandar al hover */
+        }
+
+        .btn-secondary-custom {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary-custom:hover {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+            color: var(--primary-color);
+            transform: scale(1.05);
+        }
+
+        /* Área para mostrar resultados */
+        .result-display {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            min-height: 100px;
+        }
+
+        /* Letra detectada en grande */
+        .letter-display {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--success-color);
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        /* Palabra formada */
+        .word-display {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        /* Indicador de estado del servidor */
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-connected {
+            background-color: var(--success-color);
+        }
+
+        .status-disconnected {
+            background-color: var(--danger-color);
+        }
+
+        /* Spinner de carga (oculto por defecto) */
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        /* Guía de gestos para usuarios */
+        .gesture-guide {
+            background: #e9ecef;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        .gesture-item {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+        }
+
+        .gesture-letter {
+            font-weight: bold;
+            color: var(--primary-color);
+            min-width: 30px;
+        }
+
+        /* Alertas personalizadas */
+        .alert-custom {
+            border-radius: 10px;
+            margin: 10px 0;
+        }
+
+        /* Animación de pulso para elementos activos */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .recording {
+            animation: pulse 1.5s infinite;
+        }
+    </style>
 </head>
-
 <body>
+    <!-- 
+      BARRA DE NAVEGACIÓN
+      - Fija en la parte superior
+      - Muestra el estado de conexión del servidor
+      - Contiene el logo/brand de la aplicación
+    -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-hands-helping me-2"></i>
+                Signify
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <span class="nav-link">
+                            <!-- Indicador visual de estado del servidor -->
+                            <span class="status-indicator" id="statusIndicator"></span>
+                            <span id="statusText">Conectando...</span>
+                        </span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
-<h2>Mi Cámara Web 📷</h2>
+    <!-- 
+      CONTENIDO PRINCIPAL
+      - Título y descripción de la aplicación
+      - Dos modos: Lenguaje de Señas y Voz
+      - Interfaz responsiva para móviles y escritorio
+    -->
+    <div class="container main-container">
+        <!-- Encabezado principal -->
+        <div class="row">
+            <div class="col-12">
+                <div class="text-center mb-4">
+                    <h1 class="text-white">
+                        <i class="fas fa-sign-language me-3"></i>
+                        Traductor de Lenguaje de Señas
+                    </h1>
+                    <p class="text-white-50">Comunica tus ideas usando el lenguaje de señas</p>
+                </div>
+            </div>
+        </div>
 
-<video id="video" width="400" autoplay></video>
-<br><br>
+        <!-- 
+          SELECCIÓN DE MODO
+          Dos columnas para diferentes métodos de entrada
+          Cada modo tiene su propia tarjeta con funcionalidades específicas
+        -->
+        <div class="row">
+            <!-- 
+              MODO 1: LENGUAJE DE SEÑAS A TEXTO
+              - Usa cámara web para capturar gestos
+              - Procesa imágenes con IA para detectar letras
+              - Construye palabras letra por letra
+            -->
+            <div class="col-md-6">
+                <div class="card mode-card">
+                    <div class="mode-header">
+                        <h3><i class="fas fa-hand-paper me-2"></i>LSM a Texto</h3>
+                        <p>Usa tus manos para formar letras y palabras</p>
+                    </div>
+                    <div class="card-body">
+                        <!-- 
+                          CONTENEDOR DE CÁMARA
+                          - Muestra video en tiempo real
+                          - Canvas oculto para capturar frames
+                        -->
+                        <div class="camera-container">
+                            <video id="video" autoplay playsinline></video>
+                            <canvas id="canvas" style="display:none;"></canvas>
+                        </div>
+                        
+                        <!-- Botones de control -->
+                        <div class="text-center">
+                            <button id="captureBtn" class="btn btn-primary-custom btn-lg me-2">
+                                <i class="fas fa-camera me-2"></i>Capturar Seña
+                            </button>
+                            <button id="resetBtn" class="btn btn-secondary-custom btn-lg">
+                                <i class="fas fa-redo me-2"></i>Reiniciar
+                            </button>
+                        </div>
 
-<button onclick="tomarFoto()">Tomar Foto</button>
+                        <!-- Spinner de carga (visible durante procesamiento) -->
+                        <div class="loading-spinner">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Procesando...</span>
+                            </div>
+                            <p class="mt-2">Detectando gesto...</p>
+                        </div>
 
-<canvas id="canvas" style="display:none;"></canvas>
+                        <!-- 
+                          ÁREA DE RESULTADOS
+                          - Muestra letra detectada
+                          - Muestra palabra formada
+                        -->
+                        <div class="result-display">
+                            <div class="letter-display" id="letterDisplay">
+                                <i class="fas fa-hand-paper text-muted"></i>
+                            </div>
+                            <div class="word-display" id="wordDisplay">
+                                Esperando gesto...
+                            </div>
+                        </div>
 
-<script>
+                        <!-- 
+                          GUÍA DE GESTOS
+                          - Ayuda visual para usuarios
+                          - Explica mapeo de dedos a letras
+                        -->
+                        <div class="gesture-guide">
+                            <h5><i class="fas fa-info-circle me-2"></i>Guía de Gestos</h5>
+                            <div class="gesture-item">
+                                <span class="gesture-letter">A:</span>
+                                <span>Puño cerrado</span>
+                            </div>
+                            <div class="gesture-item">
+                                <span class="gesture-letter">B:</span>
+                                <span>1 dedo levantado</span>
+                            </div>
+                            <div class="gesture-item">
+                                <span class="gesture-letter">C:</span>
+                                <span>2 dedos levantados</span>
+                            </div>
+                            <div class="gesture-item">
+                                <span class="gesture-letter">D:</span>
+                                <span>3 dedos levantados</span>
+                            </div>
+                            <div class="gesture-item">
+                                <span class="gesture-letter">E:</span>
+                                <span>4 dedos levantados</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-const video = document.getElementById("video");
+            <!-- 
+              MODO 2: VOZ A TEXTO
+              - Usa Web Speech API para reconocimiento de voz
+              - Convierte voz en texto en tiempo real
+              - Soporte para español
+            -->
+            <div class="col-md-6">
+                <div class="card mode-card">
+                    <div class="mode-header">
+                        <h3><i class="fas fa-microphone me-2"></i>Voz a Texto</h3>
+                        <p>Dicta tu mensaje usando tu voz</p>
+                    </div>
+                    <div class="card-body">
+                        <!-- Botón de control de voz -->
+                        <div class="text-center">
+                            <button id="voiceBtn" class="btn btn-primary-custom btn-lg mb-3">
+                                <i class="fas fa-microphone me-2"></i>Iniciar Dictado
+                            </button>
+                        </div>
 
-// activar cámara
-navigator.mediaDevices.getUserMedia({ video: true })
-.then(stream => {
-    video.srcObject = stream;
-});
+                        <!-- Área de resultados de voz -->
+                        <div class="result-display">
+                            <div id="voiceResult" class="word-display">
+                                Esperando dictado...
+                            </div>
+                        </div>
 
-// tomar foto
-function tomarFoto() {
+                        <!-- Instrucciones para el usuario -->
+                        <div class="gesture-guide">
+                            <h5><i class="fas fa-info-circle me-2"></i>Instrucciones</h5>
+                            <p>1. Haz clic en "Iniciar Dictado"</p>
+                            <p>2. Permite el acceso al micrófono</p>
+                            <p>3. Habla claramente</p>
+                            <p>4. El texto aparecerá automáticamente</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    const canvas = document.getElementById("canvas");
-    const ctx = canvas.getContext("2d");
+        <!-- Contenedor para alertas dinámicas -->
+        <div id="alertContainer"></div>
+    </div>
 
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
+    <!-- 
+      SCRIPTS JAVASCRIPT
+      - Lógica del lado del cliente
+      - Manejo de cámara y micrófono
+      - Comunicación con el servidor Flask
+      - Actualización dinámica de la interfaz
+    -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Variables globales para el estado de la aplicación
+        let video = document.getElementById('video');
+        let canvas = document.getElementById('canvas');
+        let ctx = canvas.getContext('2d');
+        let currentWord = '';
+        let isRecording = false;
 
+        /**
+         * VERIFICAR ESTADO DEL SERVIDOR
+         * Consulta el endpoint /health para saber si el servidor
+         * y el detector de gestos están funcionando correctamente
+         */
+        async function checkServerStatus() {
+            try {
+                const response = await fetch('/health');
+                const data = await response.json();
+                updateStatus(data.gesture_detector);
+            } catch (error) {
+                updateStatus(false);
+            }
+        }
 
-    ctx.drawImage(video, 0, 0);
+        /**
+         * ACTUALIZAR INDICADOR DE ESTADO
+         * Muestra visualmente si estamos conectados al servidor
+         */
+        function updateStatus(connected) {
+            const indicator = document.getElementById('statusIndicator');
+            const text = document.getElementById('statusText');
+            
+            if (connected) {
+                indicator.className = 'status-indicator status-connected';
+                text.textContent = 'Conectado';
+            } else {
+                indicator.className = 'status-indicator status-disconnected';
+                text.textContent = 'Desconectado';
+            }
+        }
 
-    canvas.toBlob(function(blob) {
-        let formData= new FormData();
-        formData.append("foto",blob,"foto.jpg");
+        /**
+         * MOSTRAR ALERTAS TEMPORALES
+         * Crea alertas Bootstrap que desaparecen automáticamente
+         */
+        function showAlert(message, type = 'info') {
+            const alertContainer = document.getElementById('alertContainer');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type} alert-dismissible fade show alert-custom`;
+            alert.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            alertContainer.appendChild(alert);
+            
+            // Auto-eliminar después de 5 segundos
+            setTimeout(() => {
+                alert.remove();
+            }, 5000);
+        }
 
-        fetch("/foto", {
-            method: "POST",
-            body: formData
-            })
-            .then(res=> console.log("Foto enviada"));
+        /**
+         * INICIALIZAR CÁMARA WEB
+         * Solicita permisos y configura el stream de video
+         */
+        async function initCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        width: { ideal: 640 },
+                        height: { ideal: 480 }
+                    } 
+                });
+                video.srcObject = stream;
+                showAlert('Cámara iniciada correctamente', 'success');
+            } catch (error) {
+                showAlert('Error al acceder a la cámara: ' + error.message, 'danger');
+            }
+        }
+
+        /**
+         * CAPTURAR FOTO DE LA CÁMARA
+         * Convierte el frame actual en imagen y lo envía al servidor
+         */
+        async function capturePhoto() {
+            if (!video.srcObject) {
+                showAlert('Por favor, espera a que la cámara se inicie', 'warning');
+                return;
+            }
+
+            // Configurar canvas con las dimensiones del video
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            ctx.drawImage(video, 0, 0);
+
+            // Mostrar spinner de carga
+            document.querySelector('.loading-spinner').style.display = 'block';
+
+            // Convertir canvas a blob y enviar al servidor
+            canvas.toBlob(async function(blob) {
+                const formData = new FormData();
+                formData.append('foto', blob, 'gesture.jpg');
+
+                try {
+                    const response = await fetch('/foto', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        updateDisplay(result.detected_letter, result.current_word);
+                        showAlert('Gesto detectado: ' + (result.detected_letter || 'No se detectó letra'), 'success');
+                    } else {
+                        showAlert('Error: ' + result.error, 'danger');
+                    }
+                } catch (error) {
+                    showAlert('Error de conexión: ' + error.message, 'danger');
+                } finally {
+                    document.querySelector('.loading-spinner').style.display = 'none';
+                }
             });
-           } 
-</script>
+        }
 
+        /**
+         * ACTUALIZAR DISPLAY DE RESULTADOS
+         * Muestra la letra detectada y la palabra formada
+         */
+        function updateDisplay(letter, word) {
+            const letterDisplay = document.getElementById('letterDisplay');
+            const wordDisplay = document.getElementById('wordDisplay');
+
+            if (letter) {
+                letterDisplay.textContent = letter;
+                letterDisplay.classList.add('recording');
+                setTimeout(() => letterDisplay.classList.remove('recording'), 500);
+            }
+
+            if (word) {
+                wordDisplay.textContent = 'Palabra: ' + word;
+                currentWord = word;
+            }
+        }
+
+        /**
+         * REINICIAR PALABRA ACTUAL
+         * Limpia la palabra y letra detectada
+         */
+        async function resetWord() {
+            try {
+                const response = await fetch('/reset_word', {
+                    method: 'POST'
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    document.getElementById('letterDisplay').innerHTML = '<i class="fas fa-hand-paper text-muted"></i>';
+                    document.getElementById('wordDisplay').textContent = 'Esperando gesto...';
+                    currentWord = '';
+                    showAlert('Palabra reiniciada', 'success');
+                } else {
+                    showAlert('Error: ' + result.error, 'danger');
+                }
+            } catch (error) {
+                showAlert('Error de conexión: ' + error.message, 'danger');
+            }
+        }
+
+        /**
+         * RECONOCIMIENTO DE VOZ (Web Speech API)
+         * Utiliza la API nativa del navegador para convertir voz en texto
+         * Soporte para español con transcripción en tiempo real
+         */
+        function startVoiceRecognition() {
+            // Verificar si el navegador soporta reconocimiento de voz
+            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                showAlert('Tu navegador no soporta reconocimiento de voz', 'warning');
+                return;
+            }
+
+            // Crear instancia de reconocimiento de voz
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const recognition = new SpeechRecognition();
+
+            // Configurar reconocimiento
+            recognition.lang = 'es-ES';        // Español de España
+            recognition.continuous = true;          // Escuchar continuamente
+            recognition.interimResults = true;       // Mostrar resultados parciales
+
+            // Eventos del reconocimiento
+            recognition.onstart = function() {
+                document.getElementById('voiceBtn').innerHTML = '<i class="fas fa-stop me-2"></i>Detener Dictado';
+                document.getElementById('voiceBtn').classList.add('recording');
+                showAlert('Dictado iniciado', 'info');
+            };
+
+            recognition.onresult = function(event) {
+                let finalTranscript = '';
+                let interimTranscript = '';
+
+                // Procesar todos los resultados
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    const transcript = event.results[i][0].transcript;
+                    if (event.results[i].isFinal) {
+                        finalTranscript += transcript + ' ';
+                    } else {
+                        interimTranscript += transcript;
+                    }
+                }
+
+                // Actualizar display con resultados
+                const voiceResult = document.getElementById('voiceResult');
+                if (finalTranscript) {
+                    voiceResult.textContent = finalTranscript;
+                } else {
+                    voiceResult.textContent = interimTranscript;
+                }
+            };
+
+            recognition.onerror = function(event) {
+                showAlert('Error en reconocimiento de voz: ' + event.error, 'danger');
+                stopVoiceRecognition();
+            };
+
+            recognition.onend = function() {
+                stopVoiceRecognition();
+            };
+
+            // Iniciar reconocimiento
+            recognition.start();
+            window.currentRecognition = recognition;
+        }
+
+        /**
+         * DETENER RECONOCIMIENTO DE VOZ
+         * Detiene la instancia actual y restaura el botón
+         */
+        function stopVoiceRecognition() {
+            if (window.currentRecognition) {
+                window.currentRecognition.stop();
+                window.currentRecognition = null;
+            }
+            document.getElementById('voiceBtn').innerHTML = '<i class="fas fa-microphone me-2"></i>Iniciar Dictado';
+            document.getElementById('voiceBtn').classList.remove('recording');
+        }
+
+        /**
+         * CONFIGURAR EVENT LISTENERS
+         * Asigna funciones a los eventos de los elementos HTML
+         */
+        document.getElementById('captureBtn').addEventListener('click', capturePhoto);
+        document.getElementById('resetBtn').addEventListener('click', resetWord);
+        document.getElementById('voiceBtn').addEventListener('click', function() {
+            if (window.currentRecognition) {
+                stopVoiceRecognition();
+            } else {
+                startVoiceRecognition();
+            }
+        });
+
+        /**
+         * INICIALIZAR LA APLICACIÓN
+         * Se ejecuta cuando el DOM está completamente cargado
+         */
+        document.addEventListener('DOMContentLoaded', function() {
+            initCamera();                    // Iniciar cámara
+            checkServerStatus();              // Verificar estado del servidor
+            setInterval(checkServerStatus, 30000); // Verificar cada 30 segundos
+        });
+    </script>
 </body>
 </html>
 
