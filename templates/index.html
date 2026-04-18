@@ -1,17 +1,19 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Componente Cámara</title>
+    <title>Componente Camera</title>
 </head>
 
 <body>
 
-<h2>Mi Cámara Web 📷</h2>
+<h2>My Web Camera 📷</h2>
 
 <video id="video" width="400" autoplay></video>
 <br><br>
 
-<button onclick="tomarFoto()">Tomar Foto</button>
+<button onclick="tomarFoto()">Take Photo</button>
+
+<h3 id="resultado">Waiting...</h3>
 
 <canvas id="canvas" style="display:none;"></canvas>
 
@@ -25,7 +27,7 @@ navigator.mediaDevices.getUserMedia({ video: true })
     video.srcObject = stream;
 });
 
-// tomar foto
+// función manual (botón)
 function tomarFoto() {
 
     const canvas = document.getElementById("canvas");
@@ -34,22 +36,55 @@ function tomarFoto() {
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
 
-
     ctx.drawImage(video, 0, 0);
 
     canvas.toBlob(function(blob) {
-        let formData= new FormData();
-        formData.append("foto",blob,"foto.jpg");
+        let formData = new FormData();
+        formData.append("foto", blob, "foto.jpg");
 
         fetch("/foto", {
             method: "POST",
             body: formData
-            })
-            .then(res=> console.log("Foto enviada"));
-            });
-           } 
+        })
+        .then(res => res.text())
+        .then(data => {
+            document.getElementById("resultado").innerText = data;
+        });
+    });
+
+}
+
+// 🔥 función automática (simula tiempo real)
+function enviarFrame() {
+
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    ctx.drawImage(video, 0, 0);
+
+    canvas.toBlob(function(blob) {
+        let formData = new FormData();
+        formData.append("foto", blob, "foto.jpg");
+
+        fetch("/foto", {
+            method: "POST",
+            body: formData
+        })
+        .then(res => res.text())
+        .then(data => {
+            document.getElementById("resultado").innerText = data;
+        });
+    });
+
+}
+
+// 🔥 esto hace que sea "en vivo"
+setInterval(enviarFrame, 500); // cada 0.5 segundos
+
 </script>
 
 </body>
 </html>
-
