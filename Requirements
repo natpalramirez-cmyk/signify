@@ -1,0 +1,180 @@
+##✋ Signify - Sign Language Translator
+
+A web application that helps bridge the communication gap between sign language users and people who do not know LSM (Mexican Sign Language).
+
+
+
+##🎯 Project Objective
+
+This project was developed as part of an educational program for students interested in technology and coding. The main goals are:
+
+* Learn programming: Develop practical coding skills
+* Teamwork: Collaborate to solve a real-world problem
+* Social impact: Create an inclusive communication tool
+
+
+
+##🚀 Features
+
+🤲 LSM to Text Translator
+
+* Hand gesture detection using MediaPipe
+* Recognition of basic letters (A–E) based on finger positions
+* Real-time camera interaction in the browser
+* Word formation letter by letter
+
+##🎤 Voice to Text
+
+* Speech recognition using Web Speech API
+* Spanish language support
+* Real-time transcription
+
+##🎨 User Interface
+
+* Responsive design with simple layout
+* Real-time visual feedback
+* User-friendly interaction
+
+
+
+##🛠️ Technology
+
+Backend
+
+* Flask – Python web framework
+* OpenCV – Image processing
+* MediaPipe – Hand landmark detection
+* NumPy – Numerical operations
+
+Frontend
+
+* HTML5 / CSS3
+* JavaScript
+* Web Speech API
+
+
+
+##📋 Requirements
+
+* Python 3.8 or higher
+* pip (Python package manager)
+* Modern web browser (Chrome recommended)
+* Webcam and microphone
+
+
+
+##🚀 Installation and Setup
+
+1. Clone the Repository 
+git clone https://github.com/natpalramirez-cmyk/signify.git 
+cd signify 
+
+2. Create Virtual Environment (Recommended)
+python -m venv venv
+
+# Windows
+venv\Scripts\activate
+
+# macOS/Linux
+source venv/bin/activate
+
+3. Install Dependencies 
+pip install -r requirements.txt
+
+4. Run the Aplication  
+python app.py
+
+5. Open in Browser 
+http://localhost:5001
+
+
+
+##📖 How to Use
+
+LSM to Text Mode
+
+1. Allow camera access when prompted
+2. Position your hand in front of the camera
+3. Use gestures based on finger positions:
+    * A: 0 fingers
+    * B: 1 finger
+    * C: 2 fingers
+    * D: 3 fingers
+    * E: 4 fingers
+4. The detected letter will appear automatically
+5. Continue forming words
+
+
+
+Voice to Text Mode
+
+1. Click “Start Dictation”
+2. Allow microphone access
+3. Speak clearly in Spanish
+4. Text will appear in real time
+5. Click “Stop Dictation” when finished
+
+
+
+##🔄 Real-Time Processing Approach
+
+Instead of using OpenCV windows (cv2.imshow), this project processes camera input directly in the browser:
+
+* The frontend captures frames from the webcam
+* Frames are sent periodically to the Flask backend
+* MediaPipe processes each frame
+* Results are returned and displayed on the same page
+
+This allows the system to run entirely inside a web interface without opening external windows.
+
+
+
+##⏱️ Real-Time Behavior
+
+The system simulates real-time detection by sending frames at short intervals (approximately every 0.5 seconds).
+This approach provides a responsive experience while keeping the implementation simple and efficient.
+
+
+
+##📂 Project Structure
+mi_camara/ 
+├── app.py 
+├── mano.py 
+├── templates/ 
+│ └── index.html 
+├── fotos/ 
+├── requirements.txt 
+└── README.md
+
+
+
+
+##🌍 Social Impact
+
+This project promotes accessibility and inclusion by helping people communicate across language barriers.
+It provides a simple way to translate sign language into text, making communication more inclusive.
+
+
+
+##⚠️ Technical Notes
+
+* Processing is done frame-by-frame (not continuous video streaming)
+* Performance depends on lighting and device capability
+* Designed for educational and demonstration purposes
+
+
+
+##📌 Notes
+
+* Make sure your camera is not being used by another application
+* Good lighting improves detection accuracy
+* Works best with one hand clearly visible
+
+
+
+## 👩‍💻 Team
+
+This project was developed by:
+
+- *Natalia Paloma Espiritu Ramirez*
+- *Avril Gutiérrez Rodríguez*
