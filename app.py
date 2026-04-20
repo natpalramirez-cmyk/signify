@@ -14,7 +14,11 @@ if not os.path.exists("fotos"):
 @app.route("/")
 def index():
     return render_template("index.html")
-
+    
+@app.route("/camara")
+def camara():
+    return render_template("index.html")
+    
 @app.route("/foto", methods=["POST"])
 def foto():
     archivo = request.files['foto']
