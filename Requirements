@@ -31,6 +31,8 @@ This project was developed as part of an educational program for students intere
 
 ##🎨 User Interface
 
+=======
+* Simple and intuitive layout
 * Real-time visual feedback
 * User-friendly interaction
 
@@ -80,8 +82,10 @@ source venv/bin/activate
 3. Install Dependencies 
 pip install -r requirements.txt
 
-4. Run the Aplication  
+4. Run the Application  
 python app.py
+
+Note: All components (gesture detection and voice recognition) are integrated into a single Flask application.
 
 5. Open in Browser 
 http://localhost:5001
@@ -136,6 +140,7 @@ This approach provides a responsive experience while keeping the implementation 
 
 
 ##📂 Project Structure
+
 mi_camara/ 
 ├── app.py 
 ├── mano.py 
@@ -144,7 +149,6 @@ mi_camara/
 ├── fotos/ 
 ├── requirements.txt 
 └── README.md
-
 
 
 
@@ -159,6 +163,7 @@ It provides a simple way to translate sign language into text, making communicat
 
 * Processing is done frame-by-frame (not continuous video streaming)
 * Performance depends on lighting and device capability
+* Speech recognition is limited to short audio segments (approximately 15–20 seconds) due to browser API constraints
 * Designed for educational and demonstration purposes
 
 
@@ -176,4 +181,4 @@ It provides a simple way to translate sign language into text, making communicat
 This project was developed by:
 
 - *Natalia Paloma Espiritu Ramirez*
-- *Avril Gutiérrez Rodríguez*
+- *Avril Gutiérrez*
