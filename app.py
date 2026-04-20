@@ -12,7 +12,11 @@ if not os.path.exists("fotos"):
     os.makedirs("fotos")
 
 @app.route("/")
-def index():
+def menu():
+    return render_template("menu.html") 
+
+@app.route("/camara")
+def camara():
     return render_template("index.html")
     
 @app.route("/camara")
